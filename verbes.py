@@ -1,45 +1,49 @@
-class Jeu(object):
-	"""docstring for Jeu"""
-	def __init__(self):
-		#self.bd = Banque_de_données()
-		pass
-	def main(self):
-		print("hello")
-
-	def présentation(self):
-		print("\n\t\tLES VERBES\n")
-	
-	def menu(self):
-		print("\t-----------------------------")
-		print("\t1 - Indentifiez vous")
-		print("\t2 - Créer votre compt")
-		print("\t3 - Changer la difficulté")
-		print("\t3 - Aider")
-		print("\t4 - Sortir")
-		print("\t5 - Options avancées")
-		print("\t-----------------------------\n")
-
-
+import Jeu
+import os
 #-----------------------------
 #MAIN
-game = Jeu()
+game = Jeu.Jeu()
 game.présentation()
 game.menu()
 choice = 0
 while(choice == 0):
 	choice = int(input("Choix:"))
+
+	#Indentifiez vous
 	if(choice == 1):
-		pass
+		c,n = game.login()
+		if(not c):
+			choice = 0
+			print("utilisateur ou mot de passe erroné.")
+		else:
+			os.system("clear")
+			print("Bienvenu ",n)
+			game.main()
+
+	#Créer votre compt
 	elif(choice == 2):
-		pass
+		game.create_user()
+		choice = 0
+
+	#difficuĺté
 	elif(choice == 3):
 		pass
+
+	#Aider
 	elif(choice == 4):
 		pass
+
+	#Sortir
 	elif(choice == 5):
-		pass
+		game.end()
+
+	#Options avancées
 	elif(choice == 6):
-		pass
+		choice = 0
+		if(game.opt_avanc()):
+			game.présentation()
+			game.menu()
+	
 	else:
 		print("Choisez un numéro entre 1-5")
 		choice = 0	
