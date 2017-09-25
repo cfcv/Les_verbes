@@ -51,9 +51,26 @@ class Jeu(object):
 			self.print_avanc()
 			
 			c = int(input("Choix:"))
+			#lister utilisateurs
 			if(c == 1):
 				self.bd.lister_utilisateurs()
 
+			#lister verbes
+			elif(c == 2):
+				self.bd.lister_verbes()	
+
+			#Ajouter un verbe
+			elif(c == 3):
+				self.bd.Ajouter_verbe()
+				
+			#Ajouter conjugaison
+			elif(c == 4):
+				self.bd.Ajouter_conjugaison()
+
+			#Lister tables	
+			elif(c == 5):
+				self.bd.lister_table()
+			
 			os.system("clear")
 			return True
 		
@@ -64,6 +81,10 @@ class Jeu(object):
 	def print_avanc(self):
 		print("\t-----------------------------")
 		print("\t1 - Lister utilisateurs")
+		print("\t2 - Lister les verbes")
+		print("\t3 - Ajouter un verbe")
+		print("\t4 - Ajouter conjugaison")
+		print("\t5 - Lister tables")
 		print("\t-----------------------------\n")
 
 	def end(self):
