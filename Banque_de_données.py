@@ -1,9 +1,10 @@
 import sqlite3
+import random
 
 class Banque_de_données(object):
 	"""docstring for Banque_de_données"""
 	def __init__(self):
-		self.verbes = list
+		self.verbes = list()
 		self.conn = sqlite3.connect('banco.bd')
 		self.cursor = self.conn.cursor()
 		self.cursor.execute("""CREATE TABLE IF NOT EXISTS Users(
@@ -55,9 +56,11 @@ class Banque_de_données(object):
 		 						vous varchar(50),
 		 						ils varchar(50)
 		 					);""")								
-		a = "medium"
-		self.cursor.execute("UPDATE Verbes SET dificulté = ? WHERE id = 9", (a,))						
-		self.conn.commit()
+		
+		sql_query = "SELECT * FROM Verbes"
+		for row in self.cursor.execute(sql_query):
+			self.verbes.append(row)
+		self.pronoms = list(["Je", "Tu", "Il", "Nous", "Vous", "Ils"])
 
 	def creer_compt(self, prenom, usr, psw):
 		self.cursor.execute("""INSERT INTO Users (nome,login,senha,best_score) VALUES (?,?,?,0)""", (prenom,usr,psw))
@@ -128,7 +131,11 @@ class Banque_de_données(object):
 				self.cursor.execute(sql_query, (l[0], je, tu, il, nous, vous, ils))
 
 			elif(temp == "passé"):
-				print("passé")
+				aux = input("Quel est le auxiliaire utilise avec ce verbe: ")
+				participe = input("Quel est le participe passé de ce verbe:")
+
+				sql_query = "INSERT INTO Passé(id, auxiliaire, participe) VALUES (?, ?, ?)"
+				self.cursor.execute(sql_query, (l[0], aux, participe))
 
 			elif(temp == "imparfait"):
 				print("imp")
@@ -149,6 +156,44 @@ class Banque_de_données(object):
 			print(row)
 
 		input("Prêt?")
+
+	def random_word(self):
+		tamanho = len(self.verbes)
+		if(tamanho > 0):
+			aleatorio = random.randrange(0,tamanho)
+			return (True,self.verbes.pop(aleatorio))
+		else:
+			return (False,())
+
+	def conjugaison(self, id, temp):
+		if(temp == "présent"):
+			sql_query = "SELECT je,tu,il,nous,vous,ils FROM présent WHERE id = ?"
+			self.cursor.execute(sql_query, (id,))
+			conjug = self.cursor.fetchone()
+			for i in range(6):
+				aux = conjug[i]
+				réponse = input(self.pronoms[i]+": ")
+				if(réponse != aux):
+					print("Désolé, vous avez erré. Vous avez doit typer -->",aux)
+					return False
+
+		elif(temp == "passé composé"):
+			sql_query = "SELECT auxiliaire, participe FROM Passé WHERE id = ?"
+			self.cursor.execute(sql_query, (id,))
+			conjug = self.cursor.fetchone()
+			aux = input("Auxiliaire:")
+			passé = input("Participe passé:")
+			if(aux == conjug[0] and passé == conjug[1]):
+				return True
+			else:
+				print("Desolé vous avez erré. Vous avez doit typer -->" , conjug[1])
+				return False
+
+		elif(temp == "imparfait"):
+			print("imparfait")
+		elif(temp == "futur"):
+			print("futur")
+		return True
 
 	def close(self):
 		self.conn.close()

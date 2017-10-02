@@ -20,6 +20,11 @@ while(choice == 0):
 			print("Bienvenu ",n)
 			game.main()
 
+			os.system("clear")
+			game.présentation()
+			game.menu()
+			choice = 0
+
 	#Créer votre compt
 	elif(choice == 2):
 		game.create_user()

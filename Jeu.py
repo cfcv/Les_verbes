@@ -7,9 +7,36 @@ class Jeu(object):
 	def __init__(self):
 		self.bd = BD.Banque_de_données()
 		self.diff = E.Difficulté.facile
+		self.tupla = tuple()
+		self.possibilités = list(["présent","passé composé", "imparfait", "futur"])
 
 	def main(self):
-		print("hello")
+		print("Lequel temp verbel vous souhaitez pratiquer?")
+		print("possibilités:",self.possibilités)
+		r = input("Réponse:")
+		
+		self.score = 0;
+		if(r in self.possibilités):
+			b = True
+			while(b):
+				b, self.tupla = self.bd.random_word()
+				if(b):
+					print("Score:",self.score)
+					print("("+self.tupla[2]+") Conjuguez le verbe suivant au", r+ ":",self.tupla[1])
+					b = self.bd.conjugaison(self.tupla[0], r)
+					if(b):
+						os.system("clear")
+						self.score += 1
+					else:
+						self.print_score()
+						input("Essayez à nouveau!")
+				else:
+					print("Felicitations!!! vous êtes un ninja en",r)
+
+		else:
+			print("Vous devez choisir un temp verbel valide")
+			input("D'accord?")
+		return
 
 	def présentation(self):
 		print("\n\t\tLES VERBES\n")
@@ -70,7 +97,7 @@ class Jeu(object):
 			#Lister tables	
 			elif(c == 5):
 				self.bd.lister_table()
-			
+
 			os.system("clear")
 			return True
 		
@@ -86,6 +113,19 @@ class Jeu(object):
 		print("\t4 - Ajouter conjugaison")
 		print("\t5 - Lister tables")
 		print("\t-----------------------------\n")
+
+	def print_score(self):
+		if(self.score < 10):
+			print("\n\n\t\t*********")
+			print("\t\t"+"*  ",self.score,"  *")
+			print("\t\t*********")
+			
+		else:
+			print("\n\n\t\t**********")
+			print("\t\t"+"*  ",self.score,"  *")
+			print("\t\t**********")
+
+		print("\n\n")
 
 	def end(self):
 		self.bd.close()
