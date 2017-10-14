@@ -17,6 +17,7 @@ class Jeu(object):
 		
 		self.score = 0;
 		if(r in self.possibilités):
+			self.bd.inicializa_words(r)
 			b = True
 			while(b):
 				b, self.tupla = self.bd.random_word()
