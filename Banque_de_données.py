@@ -4,6 +4,7 @@ import random
 class Banque_de_données(object):
 	"""docstring for Banque_de_données"""
 	def __init__(self):
+		self.c = False
 		self.verbes = list()
 		self.conn = sqlite3.connect('banco.bd')
 		self.cursor = self.conn.cursor()
@@ -71,31 +72,32 @@ class Banque_de_données(object):
 		sql_query = "SELECT * FROM Verbes WHERE id = ?"
 		del self.verbes[0:len(self.verbes)]
 		self.index = list()
+		self.c = False
 
 		if(temp == "présent"):
-			for row in self.cursor.execute("SELECT id FROM Erreurs ORDER BY present DESC"):
-				self.index.append(row[0])
+			for row in self.cursor.execute("SELECT id,present FROM Erreurs ORDER BY present DESC"):
+				self.index.append(row)
 
 		elif(temp == "passé composé"):
-			for row in self.cursor.execute("SELECT id FROM Erreurs ORDER BY passe DESC"):
-				self.index.append(row[0])
+			for row in self.cursor.execute("SELECT id,passe FROM Erreurs ORDER BY passe DESC"):
+				self.index.append(row)
 
 		elif(temp == "imparfait"):
-			for row in self.cursor.execute("SELECT id FROM Erreurs ORDER BY imparfait DESC"):
-				self.index.append(row[0])
+			for row in self.cursor.execute("SELECT id,imparfait FROM Erreurs ORDER BY imparfait DESC"):
+				self.index.append(row)
 
 		elif(temp == "futur"):
-			for row in self.cursor.execute("SELECT id FROM Erreurs ORDER BY futur DESC"):
-				self.index.append(row[0])
+			for row in self.cursor.execute("SELECT id,futur FROM Erreurs ORDER BY futur DESC"):
+				self.index.append(row)
 		
-		print(self.index)
+		#print(self.index)
 		for i in range(0,len(self.index)):
-			print(i)
-			self.cursor.execute(sql_query, (self.index[i], ))
+			self.cursor.execute(sql_query, (self.index[i][0], ))
 			l = self.cursor.fetchone()
+			aux = (self.index[i][1],)
+			l = l+aux
 			self.verbes.append(l)
-
-		#print(self.verbes)
+		print(self.verbes)
 
 	def inicializa_erreurs(self):
 		for i in range(1,78):
@@ -205,7 +207,15 @@ class Banque_de_données(object):
 	def random_word(self):
 		tamanho = len(self.verbes)
 		if(tamanho > 0):
-			return (True,self.verbes.pop(0))
+			if(self.c):
+				aux = random.randint(0,len(self.verbes))
+				return (True,self.verbes.pop(aux))
+			
+			else:
+				l = self.verbes[0][3]
+				if(l == 0):
+					self.c = True
+				return (True,self.verbes.pop(0))
 		else:
 			return (False,())
 
@@ -245,7 +255,6 @@ class Banque_de_données(object):
 		sql_query = "SELECT * FROM Erreurs WHERE id = ?"
 		self.cursor.execute(sql_query, (id,))
 		l = self.cursor.fetchone()
-		print("l:",l)
 		if(l == None):
 			if(temp == "présent"):
 				sql_query = "INSERT INTO Erreurs VALUES (?,1,0,0,0)"
@@ -283,6 +292,7 @@ class Banque_de_données(object):
 				l = (l[0], l[1], l[2], l[3], l[4]+1)
 				sql_query = "UPDATE Erreurs SET futur = ? WHERE id = ?"
 				self.cursor.execute(sql_query, (l[4],id))
+		print("l:",l)
 		self.conn.commit()
 
 	def close(self):
