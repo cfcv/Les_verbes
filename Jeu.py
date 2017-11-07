@@ -11,7 +11,7 @@ class Jeu(object):
 		self.possibilités = list(["présent","passé composé", "imparfait", "futur"])
 
 	def main(self):
-		print("Lequel temp verbel vous souhaitez pratiquer?")
+		print("Lequel temp verbal vous souhaitez pratiquer?")
 		print("possibilités:",self.possibilités)
 		r = input("Réponse:")
 		

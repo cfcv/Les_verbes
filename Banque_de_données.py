@@ -278,7 +278,16 @@ class Banque_de_données(object):
 					return False
 
 		elif(temp == "futur"):
-			print("futur")
+			sql_query = "SELECT je,tu,il,nous,vous,ils FROM Futur WHERE id = ?"
+			self.cursor.execute(sql_query, (id,))
+			conjug = self.cursor.fetchone()
+			for i in range(6):
+				aux = conjug[i]
+				réponse = input(self.pronoms[i]+": ")
+				if(réponse != aux):
+					print("Désolé, vous avez erré. Vous avez doit typer -->",aux)
+					self.add_Erreur(id, "présent")
+					return False
 		return True
 
 	def add_Erreur(self, id, temp):
