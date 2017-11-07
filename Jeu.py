@@ -99,6 +99,10 @@ class Jeu(object):
 			elif(c == 5):
 				self.bd.lister_table()
 
+			#Accioner le script
+			elif(c == 6):
+				self.bd.futur()
+			
 			os.system("clear")
 			return True
 		
@@ -113,6 +117,7 @@ class Jeu(object):
 		print("\t3 - Ajouter un verbe")
 		print("\t4 - Ajouter conjugaison")
 		print("\t5 - Lister tables")
+		print("\t6 - Script")
 		print("\t-----------------------------\n")
 
 	def print_score(self):

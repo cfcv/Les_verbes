@@ -1,5 +1,6 @@
 import sqlite3
 import random
+import os
 
 class Banque_de_données(object):
 	"""docstring for Banque_de_données"""
@@ -97,7 +98,8 @@ class Banque_de_données(object):
 			aux = (self.index[i][1],)
 			l = l+aux
 			self.verbes.append(l)
-		print(self.verbes)
+		#Debug
+		#print(self.verbes)
 
 	def inicializa_erreurs(self):
 		for i in range(1,78):
@@ -185,10 +187,28 @@ class Banque_de_données(object):
 				self.cursor.execute(sql_query, (l[0], aux, participe))
 
 			elif(temp == "imparfait"):
-				print("imp")
+				print("Conjuguez ce verbe")
+				je = input("je:")
+				tu = input("tu:")
+				il = input("il:")
+				nous = input("nous:")
+				vous = input("vous:")
+				ils = input("ils:")
+				
+				sql_query = "INSERT INTO Imparfait(id, je, tu, il, nous, vous, ils) VALUES (?, ?, ?, ?, ?, ?, ?)"
+				self.cursor.execute(sql_query, (l[0], je, tu, il, nous, vous, ils))
 
 			elif(temp == "futur"):
-				print("f")
+				print("Conjuguez ce verbe")
+				je = input("je:")
+				tu = input("tu:")
+				il = input("il:")
+				nous = input("nous:")
+				vous = input("vous:")
+				ils = input("ils:")
+				
+				sql_query = "INSERT INTO Futur(id, je, tu, il, nous, vous, ils) VALUES (?, ?, ?, ?, ?, ?, ?)"
+				self.cursor.execute(sql_query, (l[0], je, tu, il, nous, vous, ils))
 
 			else:
 				print("Nop")
@@ -246,7 +266,17 @@ class Banque_de_données(object):
 				return False
 
 		elif(temp == "imparfait"):
-			print("imparfait")
+			sql_query = "SELECT je,tu,il,nous,vous,ils FROM Imparfait WHERE id = ?"
+			self.cursor.execute(sql_query, (id,))
+			conjug = self.cursor.fetchone()
+			for i in range(6):
+				aux = conjug[i]
+				réponse = input(self.pronoms[i]+": ")
+				if(réponse != aux):
+					print("Désolé, vous avez erré. Vous avez doit typer -->",aux)
+					self.add_Erreur(id, "imparfait")
+					return False
+
 		elif(temp == "futur"):
 			print("futur")
 		return True
@@ -295,6 +325,9 @@ class Banque_de_données(object):
 		print("l:",l)
 		self.conn.commit()
 
+	def futur(self):
+		os.system("./get_futur.sh")
+		input("pret?")
 	def close(self):
 		self.conn.close()
 
