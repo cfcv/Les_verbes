@@ -1,6 +1,7 @@
 import sqlite3
 import random
 import os
+from datetime import datetime
 
 class Banque_de_données(object):
 	"""docstring for Banque_de_données"""
@@ -10,11 +11,15 @@ class Banque_de_données(object):
 		self.conn = sqlite3.connect('banco.bd')
 		self.cursor = self.conn.cursor()
 		self.cursor.execute("""CREATE TABLE IF NOT EXISTS Users(
-								id  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-								nome varchar(50),
+								id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 								login varchar(10),
+								nome varchar(50),
 								senha varchar(10),
-								best_score integer
+								scorePre integer,
+								scorePass interger,
+								scoreImp integer,
+								scoreFutur integer,
+								lastdate varchar(100)		
 							);""")
 
 		self.cursor.execute("""CREATE TABLE IF NOT EXISTS Verbes(
@@ -99,7 +104,7 @@ class Banque_de_données(object):
 			l = l+aux
 			self.verbes.append(l)
 		#Debug
-		#print(self.verbes)
+		print(self.verbes)
 
 	def inicializa_erreurs(self):
 		for i in range(1,78):
@@ -112,19 +117,20 @@ class Banque_de_données(object):
 		input("a")
 
 	def creer_compt(self, prenom, usr, psw):
-		self.cursor.execute("""INSERT INTO Users (nome,login,senha,best_score) VALUES (?,?,?,0)""", (prenom,usr,psw))
+		self.cursor.execute("""INSERT INTO Users (nome,login,senha,scorePre,scorePass,scoreImp,scoreFutur) VALUES (?,?,?,0,0,0,0)""", (prenom,usr,psw))
 		self.conn.commit()
 
 	def login(self, usr, psw):
-		self.cursor.execute("""SELECT nome,senha FROM Users WHERE login = ?""", (usr,))
+		self.cursor.execute("""SELECT * FROM Users WHERE login = ?""", (usr,))
 		l = self.cursor.fetchone()
-		if(l[1] == psw):
-			return (True,l[0])
+		if(l[3] == psw):
+			data = datetime.now()
+			return (True,l[2], l[4], l[5], l[6], l[7], usr, data)
 		else:
 			return (False,"")
 
 	def lister_utilisateurs(self):
-		sql_query = 'SELECT login, best_score FROM Users'
+		sql_query = 'SELECT * FROM Users'
 		for row in self.cursor.execute(sql_query):
 			print(row)
 
@@ -226,9 +232,12 @@ class Banque_de_données(object):
 
 	def random_word(self):
 		tamanho = len(self.verbes)
+		print(self.verbes)
+		print("tamanho atual:",tamanho)
 		if(tamanho > 0):
 			if(self.c):
-				aux = random.randint(0,len(self.verbes))
+				aux = random.randint(0,len(self.verbes)-1)
+				print("random:",aux)
 				return (True,self.verbes.pop(aux))
 			
 			else:
@@ -286,7 +295,7 @@ class Banque_de_données(object):
 				réponse = input(self.pronoms[i]+": ")
 				if(réponse != aux):
 					print("Désolé, vous avez erré. Vous avez doit typer -->",aux)
-					self.add_Erreur(id, "présent")
+					self.add_Erreur(id, "futur")
 					return False
 		return True
 
@@ -327,16 +336,53 @@ class Banque_de_données(object):
 				sql_query = "UPDATE Erreurs SET imparfait = ? WHERE id = ?"
 				self.cursor.execute(sql_query, (l[3],id))
 
-			else:
+			elif(temp == "futur"):
 				l = (l[0], l[1], l[2], l[3], l[4]+1)
 				sql_query = "UPDATE Erreurs SET futur = ? WHERE id = ?"
 				self.cursor.execute(sql_query, (l[4],id))
 		print("l:",l)
 		self.conn.commit()
 
+	def addScore(self, user, temp, sc):
+		sql_query = 'SELECT * FROM Users WHERE login = ?'
+		if(temp == 'présent'):
+			sql_query2 = 'UPDATE Users SET scorePre = ? WHERE login = ?'
+			i = 4
+
+		elif(temp == 'passé composé'):
+			sql_query2 = 'UPDATE Users SET scorePass = ? WHERE login = ?'
+			i = 5
+
+		elif(temp == 'imparfait'):
+			sql_query2 = 'UPDATE Users SET scoreImp = ? WHERE login = ?'
+			i = 6
+
+		elif(temp == 'futur'):
+			sql_query2 = 'UPDATE Users SET scoreFutur = ? WHERE login = ?'
+			i = 7
+
+		self.cursor.execute(sql_query, (user,))
+		l = self.cursor.fetchone()
+		if(sc > l[i]):
+			self.cursor.execute(sql_query2, (sc,user))
+		self.conn.commit()
+
 	def futur(self):
 		os.system("./get_futur.sh")
 		input("pret?")
+
+	def moitienne(self):
+		table = []
+		for row in self.cursor.execute("SELECT * FROM Erreurs"):
+			row = (row[0],int(row[1]/2), int(row[2]/2), int(row[3]/2), int(row[4]/2))
+			table.append(row)
+
+		#print(table)
+		for element in table:
+			self.cursor.execute("UPDATE Erreurs SET present = ?, passe = ?, imparfait = ?, futur = ? WHERE id = ?", (element[1],element[2],element[3],element[4],element[0]))
+		input('pret?')
+		self.conn.commit()
+
 	def close(self):
 		self.conn.close()
 

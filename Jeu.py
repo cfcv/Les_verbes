@@ -10,7 +10,13 @@ class Jeu(object):
 		self.tupla = tuple()
 		self.possibilités = list(["présent","passé composé", "imparfait", "futur"])
 
-	def main(self):
+	def login(self):
+		usr = input("Utilisateur:")
+		psw = input("Mot de passe:")
+		(bol, name, sp, spss, sim, sf, user,data) = self.bd.login(usr, psw)
+		return (bol, name, sp, spss, sim, sf, user,data)
+
+	def main(self, user):
 		print("Lequel temp verbal vous souhaitez pratiquer?")
 		print("possibilités:",self.possibilités)
 		r = input("Réponse:")
@@ -30,9 +36,13 @@ class Jeu(object):
 						self.score += 1
 					else:
 						self.print_score()
+						self.bd.addScore(user, r, self.score)
 						input("Essayez à nouveau!")
+
 				else:
 					print("Felicitations!!! vous êtes un ninja en",r)
+					self.bd.addScore(user,r,self.score)
+					input('Súper!')
 
 		else:
 			print("Vous devez choisir un temp verbel valide")
@@ -55,11 +65,6 @@ class Jeu(object):
 		else:
 			print("Les mots de passe doivent être les mêmes.")
 
-	def login(self):
-		usr = input("Utilisateur:")
-		psw = input("Mot de passe:")
-		(bol, name) = self.bd.login(usr, psw)
-		return (bol,name)
 
 	def menu(self):
 		print("\t-----------------------------")
@@ -103,6 +108,10 @@ class Jeu(object):
 			elif(c == 6):
 				self.bd.futur()
 			
+			#moitienne
+			elif(c == 7):
+				self.bd.moitienne()
+
 			os.system("clear")
 			return True
 		
@@ -118,6 +127,7 @@ class Jeu(object):
 		print("\t4 - Ajouter conjugaison")
 		print("\t5 - Lister tables")
 		print("\t6 - Script")
+		print("\t7 - moitienne")
 		print("\t-----------------------------\n")
 
 	def print_score(self):
