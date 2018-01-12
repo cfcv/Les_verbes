@@ -8,7 +8,7 @@ class Jeu(object):
 		self.bd = BD.Banque_de_données()
 		self.diff = E.Difficulté.facile
 		self.tupla = tuple()
-		self.possibilités = list(["présent","passé composé", "imparfait", "futur"])
+		self.possibilités = list(["présent","passé composé", "imparfait", "futur", "subjunctif"])
 
 	def login(self):
 		usr = input("Utilisateur:")
@@ -17,7 +17,7 @@ class Jeu(object):
 		return (bol, name, sp, spss, sim, sf, user,data)
 
 	def main(self, user):
-		print("Lequel temp verbal vous souhaitez pratiquer?")
+		print("Quel temp verbal vous souhaitez pratiquer?")
 		print("possibilités:",self.possibilités)
 		r = input("Réponse:")
 		

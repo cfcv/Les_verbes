@@ -19,6 +19,7 @@ class Banque_de_données(object):
 								scorePass interger,
 								scoreImp integer,
 								scoreFutur integer,
+								scoreSubj integer,
 								lastdate varchar(100)		
 							);""")
 
@@ -64,14 +65,24 @@ class Banque_de_données(object):
 		 						ils varchar(50)
 		 					);""")	
 
+		self.cursor.execute("""CREATE TABLE IF NOT EXISTS Subjonctif(
+								id  INTEGER PRIMARY KEY,
+		 						je varchar(50),
+		 						tu varchar(50),
+		 						il varchar(50),
+		 						nous varchar(50),
+		 						vous varchar(50),
+		 						ils varchar(50)
+								);""")
+
 		self.cursor.execute("""CREATE TABLE IF NOT EXISTS Erreurs(
 		 						 id INTEGER PRIMARY KEY, 
 		 						 present INTEGER,
 		 						 passe INTEGER,
 		 						 imparfait INTEGER,
-		 						 futur INTEGER
-		 						 );""")							
-
+		 						 futur INTEGER,
+								 subjonctif INTEGER 
+		 						 );""")
 		self.pronoms = list(["Je", "Tu", "Il", "Nous", "Vous", "Ils"])
 
 	def inicializa_words(self, temp):
@@ -107,14 +118,21 @@ class Banque_de_données(object):
 		print(self.verbes)
 
 	def inicializa_erreurs(self):
-		for i in range(1,78):
-			sql_query = "SELECT id FROM Erreurs WHERE id = ?"
-			self.cursor.execute(sql_query, (i, ))
-			l = self.cursor.fetchone()
-			if(l == None):
-				self.cursor.execute("INSERT INTO Erreurs (id,present,passe,imparfait,futur) VALUES (?,0,0,0,0)", (i,))
-		self.conn.commit()
-		input("a")
+		#for i in range(1,78):
+		#	sql_query = "SELECT id FROM Erreurs WHERE id = ?"
+		#	self.cursor.execute(sql_query, (i, ))
+		#	l = self.cursor.fetchone()
+		#	if(l == None):
+		#		self.cursor.execute("INSERT INTO Erreurs (id,present,passe,imparfait,futur) VALUES (?,0,0,0,0)", (i,))
+		#self.conn.commit()
+		#input("a")
+		self.cursor.execute("UPDATE Erreurs SET subjonctif = 0")
+		#for i in range(1,78):
+		#	sql_query = "SELECT * FROM Erreurs WHERE id = ?"
+		#	self.cursor.execute(sql_query, (i, ))
+		#	l = self.cursor.fetchone()
+		#	print(l[5])
+		#input("b")
 
 	def creer_compt(self, prenom, usr, psw):
 		self.cursor.execute("""INSERT INTO Users (nome,login,senha,scorePre,scorePass,scoreImp,scoreFutur) VALUES (?,?,?,0,0,0,0)""", (prenom,usr,psw))
@@ -171,7 +189,7 @@ class Banque_de_données(object):
 			print("Ce verbe n'est pas dans la table!")
 
 		else:
-			temp = input("Le temp verbel(présent,passé,imparfait, futur):")
+			temp = input("Le temp verbel(présent,passé,imparfait, futur, subjonctif):")
 
 			if(temp == "présent"):
 				print("Conjuguez ce verbe")
@@ -214,6 +232,18 @@ class Banque_de_données(object):
 				ils = input("ils:")
 				
 				sql_query = "INSERT INTO Futur(id, je, tu, il, nous, vous, ils) VALUES (?, ?, ?, ?, ?, ?, ?)"
+				self.cursor.execute(sql_query, (l[0], je, tu, il, nous, vous, ils))
+
+			elif(temp == "subjonctif"):
+				print("Conjuguez ce verbe")
+				je = input("je:")
+				tu = input("tu:")
+				il = input("il:")
+				nous = input("nous:")
+				vous = input("vous:")
+				ils = input("ils:")
+				
+				sql_query = "INSERT INTO Subjonctif(id, je, tu, il, nous, vous, ils) VALUES (?, ?, ?, ?, ?, ?, ?)"
 				self.cursor.execute(sql_query, (l[0], je, tu, il, nous, vous, ils))
 
 			else:
@@ -297,6 +327,18 @@ class Banque_de_données(object):
 					print("Désolé, vous avez erré. Vous avez doit typer -->",aux)
 					self.add_Erreur(id, "futur")
 					return False
+				
+		elif(temp == "subjunctif"):
+			sql_query = "SELECT je,tu,il,nous,vous,ils FROM Subjonctif WHERE id = ?"
+			self.cursor.execute(sql_query, (id,))
+			conjug = self.cursor.fetchone()
+			for i in range(6):
+				aux = conjug[i]
+				réponse = input(self.pronoms[i]+": ")
+				if(réponse != aux):
+					print("Désolé, vous avez erré. Vous avez doit typer -->",aux)
+					self.add_Erreur(id, "subjonctif")
+					return False
 		return True
 
 	def add_Erreur(self, id, temp):
@@ -322,24 +364,30 @@ class Banque_de_données(object):
 
 		else:
 			if(temp == "présent"):
-				l = (l[0], l[1]+1, l[2], l[3], l[4])
+				l = (l[0], l[1]+1, l[2], l[3], l[4], l[5])
 				sql_query = "UPDATE Erreurs SET present = ? WHERE id = ?"
 				self.cursor.execute(sql_query, (l[1],id))
 
 			elif(temp == "passé composé"):
-				l = (l[0], l[1], l[2]+1, l[3], l[4])
+				l = (l[0], l[1], l[2]+1, l[3], l[4], l[5])
 				sql_query = "UPDATE Erreurs SET passe = ? WHERE id = ?"
 				self.cursor.execute(sql_query, (l[2],id))
 
 			elif(temp == "imparfait"):
-				l = (l[0], l[1], l[2], l[3]+1, l[4])
+				l = (l[0], l[1], l[2], l[3]+1, l[4], l[5])
 				sql_query = "UPDATE Erreurs SET imparfait = ? WHERE id = ?"
 				self.cursor.execute(sql_query, (l[3],id))
 
 			elif(temp == "futur"):
-				l = (l[0], l[1], l[2], l[3], l[4]+1)
+				l = (l[0], l[1], l[2], l[3], l[4]+1, l[5])
 				sql_query = "UPDATE Erreurs SET futur = ? WHERE id = ?"
 				self.cursor.execute(sql_query, (l[4],id))
+			
+			elif(temp == "subjonctif"):
+				l = (l[0], l[1], l[2], l[3], l[4], l[5]+1)
+				sql_query = "UPDATE Erreurs SET subjonctif = ? WHERE id = ?"
+				self.cursor.execute(sql_query, (l[5],id))
+
 		print("l:",l)
 		self.conn.commit()
 
@@ -361,6 +409,9 @@ class Banque_de_données(object):
 			sql_query2 = 'UPDATE Users SET scoreFutur = ? WHERE login = ?'
 			i = 7
 
+		elif(temp == 'subjonctif'):
+			sql_query2 = 'UPDATE Users SET scoreSubj = ? WHERE login = ?'
+			i = 7
 		self.cursor.execute(sql_query, (user,))
 		l = self.cursor.fetchone()
 		if(sc > l[i]):
@@ -374,12 +425,12 @@ class Banque_de_données(object):
 	def moitienne(self):
 		table = []
 		for row in self.cursor.execute("SELECT * FROM Erreurs"):
-			row = (row[0],int(row[1]/2), int(row[2]/2), int(row[3]/2), int(row[4]/2))
+			row = (row[0],int(row[1]/2), int(row[2]/2), int(row[3]/2), int(row[4]/2), int(row[5]/2))
 			table.append(row)
 
 		#print(table)
 		for element in table:
-			self.cursor.execute("UPDATE Erreurs SET present = ?, passe = ?, imparfait = ?, futur = ? WHERE id = ?", (element[1],element[2],element[3],element[4],element[0]))
+			self.cursor.execute("UPDATE Erreurs SET present = ?, passe = ?, imparfait = ?, futur = ?, subjonctif WHERE id = ?", (element[1],element[2],element[3],element[4],element[5], element[0]))
 		input('pret?')
 		self.conn.commit()
 
