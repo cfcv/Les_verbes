@@ -107,6 +107,10 @@ class Banque_de_données(object):
 			for row in self.cursor.execute("SELECT id,futur FROM Erreurs ORDER BY futur DESC"):
 				self.index.append(row)
 		
+		elif(temp == "subjonctif"):
+			for row in self.cursor.execute("SELECT id,subjonctif FROM Erreurs ORDER BY subjonctif DESC"):
+				self.index.append(row)
+		
 		#print(self.index)
 		for i in range(0,len(self.index)):
 			self.cursor.execute(sql_query, (self.index[i][0], ))
@@ -143,7 +147,7 @@ class Banque_de_données(object):
 		l = self.cursor.fetchone()
 		if(l[3] == psw):
 			data = datetime.now()
-			return (True,l[2], l[4], l[5], l[6], l[7], usr, data)
+			return (True,l[2], l[4], l[5], l[6], l[7], l[9], usr, data)
 		else:
 			return (False,"")
 
@@ -328,10 +332,11 @@ class Banque_de_données(object):
 					self.add_Erreur(id, "futur")
 					return False
 				
-		elif(temp == "subjunctif"):
+		elif(temp == "subjonctif"):
 			sql_query = "SELECT je,tu,il,nous,vous,ils FROM Subjonctif WHERE id = ?"
 			self.cursor.execute(sql_query, (id,))
 			conjug = self.cursor.fetchone()
+			
 			for i in range(6):
 				aux = conjug[i]
 				réponse = input(self.pronoms[i]+": ")

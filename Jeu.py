@@ -8,13 +8,13 @@ class Jeu(object):
 		self.bd = BD.Banque_de_données()
 		self.diff = E.Difficulté.facile
 		self.tupla = tuple()
-		self.possibilités = list(["présent","passé composé", "imparfait", "futur", "subjunctif"])
+		self.possibilités = list(["présent","passé composé", "imparfait", "futur", "subjonctif"])
 
 	def login(self):
 		usr = input("Utilisateur:")
 		psw = input("Mot de passe:")
-		(bol, name, sp, spss, sim, sf, user,data) = self.bd.login(usr, psw)
-		return (bol, name, sp, spss, sim, sf, user,data)
+		(bol, name, sp, spss, sim, sf, ssubj, user,data) = self.bd.login(usr, psw)
+		return (bol, name, sp, spss, sim, sf, ssubj, user,data)
 
 	def main(self, user):
 		print("Quel temp verbal vous souhaitez pratiquer?")
@@ -31,6 +31,8 @@ class Jeu(object):
 					print("Score:",self.score)
 					print("("+self.tupla[2]+") Conjuguez le verbe suivant au", r+ ":",self.tupla[1])
 					b = self.bd.conjugaison(self.tupla[0], r)
+					print(b)
+					input('a')
 					if(b):
 						os.system("clear")
 						self.score += 1

@@ -11,7 +11,7 @@ while(choice == 0):
 
 	#Indentifiez vous
 	if(choice == 1):
-		c,n,sp,spss,sim,sf,usr,data = game.login()
+		c,n,sp,spss,sim,sf,ssubj,usr,data = game.login()
 		if(not c):
 			choice = 0
 			print("utilisateur ou mot de passe erroné.")
@@ -19,7 +19,7 @@ while(choice == 0):
 			os.system("clear")
 			print("Bienvenu ",n)
 			print("Last active:",data)
-			print("Maximum Score, Présent:",sp,"Passé composé:",spss,"Imparfait:",sim,"Futur",sf,"\n")
+			print("Maximum Score, Présent:",sp,"Passé composé:",spss,"Imparfait:",sim,"Futur:",sf,"Subjonctif:",ssubj,"\n")
 			game.main(usr)
 
 			os.system("clear")
