@@ -21,7 +21,7 @@ class Jeu(object):
 		print("possibilités:",self.possibilités)
 		r = input("Réponse:")
 		
-		self.score = 0;
+		self.score = 0
 		if(r in self.possibilités):
 			self.bd.inicializa_words(r)
 			b = True
@@ -31,10 +31,8 @@ class Jeu(object):
 					print("Score:",self.score)
 					print("("+self.tupla[2]+") Conjuguez le verbe suivant au", r+ ":",self.tupla[1])
 					b = self.bd.conjugaison(self.tupla[0], r)
-					print(b)
-					input('a')
 					if(b):
-						os.system("clear")
+						os.system("cls")
 						self.score += 1
 					else:
 						self.print_score()
@@ -81,7 +79,7 @@ class Jeu(object):
 	def opt_avanc(self):
 		psw = input("Mot de passe:")
 		if(psw == "1234"):
-			os.system("clear")
+			os.system("cls")
 			print("\n\t\tZONE RÉSERVÉE\n")
 			self.print_avanc()
 			
@@ -112,9 +110,10 @@ class Jeu(object):
 			
 			#moitienne
 			elif(c == 7):
+				self.bd.inicializa_score()
 				self.bd.moitienne()
 
-			os.system("clear")
+			os.system("cls")
 			return True
 		
 		else:

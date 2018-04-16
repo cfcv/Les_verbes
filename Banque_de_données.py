@@ -85,6 +85,9 @@ class Banque_de_données(object):
 		 						 );""")
 		self.pronoms = list(["Je", "Tu", "Il", "Nous", "Vous", "Ils"])
 
+	def inicializa_score(self):
+		self.cursor.execute("UPDATE Users SET scorePre = 0, scorePass = 0, scoreImp = 0, scoreFutur = 0, scoreSubj = 0")
+
 	def inicializa_words(self, temp):
 		sql_query = "SELECT * FROM Verbes WHERE id = ?"
 		del self.verbes[0:len(self.verbes)]
@@ -435,7 +438,7 @@ class Banque_de_données(object):
 
 		#print(table)
 		for element in table:
-			self.cursor.execute("UPDATE Erreurs SET present = ?, passe = ?, imparfait = ?, futur = ?, subjonctif WHERE id = ?", (element[1],element[2],element[3],element[4],element[5], element[0]))
+			self.cursor.execute("UPDATE Erreurs SET present = ?, passe = ?, imparfait = ?, futur = ?, subjonctif = ? WHERE id = ?", (element[1],element[2],element[3],element[4],element[5], element[0]))
 		input('pret?')
 		self.conn.commit()
 

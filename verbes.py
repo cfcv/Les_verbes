@@ -16,13 +16,13 @@ while(choice == 0):
 			choice = 0
 			print("utilisateur ou mot de passe erroné.")
 		else:
-			os.system("clear")
+			os.system("cls")
 			print("Bienvenu ",n)
 			print("Last active:",data)
 			print("Maximum Score, Présent:",sp,"Passé composé:",spss,"Imparfait:",sim,"Futur:",sf,"Subjonctif:",ssubj,"\n")
 			game.main(usr)
 
-			os.system("clear")
+			os.system("cls")
 			game.présentation()
 			game.menu()
 			choice = 0
