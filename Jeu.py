@@ -113,6 +113,9 @@ class Jeu(object):
 				self.bd.inicializa_score()
 				self.bd.moitienne()
 
+			elif(c == 8):
+				self.bd.delete_conjug()
+
 			os.system("cls")
 			return True
 		
@@ -129,6 +132,7 @@ class Jeu(object):
 		print("\t5 - Lister tables")
 		print("\t6 - Script")
 		print("\t7 - moitienne")
+		print("\t8 - Delete conjugaison")
 		print("\t-----------------------------\n")
 
 	def print_score(self):
